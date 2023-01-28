@@ -155,7 +155,8 @@ def handle_adsb(dump1090_address, dump1090_port, sta_lat, sta_lon, sta_ele):
     adsb_message = ""
 
     while True:
-
+        raw_received = incoming.recv(200)
+        adsb_message = adsb_message + raw_received.decode()
         while '\n' in str(adsb_message):  # there is more to process
             # print('processing')
             first_adsb_message = adsb_message.split("\n")[0]
