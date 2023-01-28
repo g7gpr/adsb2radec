@@ -17,11 +17,11 @@ def parseadsbdata(adsb):
  [float, float, float, float] lat, lon , ele, julian date
  """
 
-    # Break adsb data into parts
-    # example adsb message
+    # Position fields have 22 fields, field 0 is MSG, field 1 is 3
+    #
     # 0   1 2 3 4      5 6          7            8          9            10 11   12 13 14        15
     # MSG,3,1,1,7C7B81,1,2023/01/27,05:59:17.093,2023/01/27,05:59:17.138,  ,2600, ,   ,-32.30930,115.78676,,,0,,0,0
-    #print("Parsing:{}".format(adsb))
+
     if len(adsb) != 0:
         split_adsb_data = adsb.split(",")
 
@@ -116,6 +116,41 @@ def fake_adsb(length,f):
 
 
 if __name__ == "__main__":
+
+    # ## PARSE INPUT ARGUMENTS ###
+    # Init the command line arguments parser
+    arg_parser = argparse.ArgumentParser(description=""" Radec coordinate server
+           """)
+
+    arg_parser.add_argument('lat', type=float, help="observer latitude(deg)")
+
+    arg_parser.add_argument('lon', type=float, help="observer longtiude(deg)")
+
+    arg_parser.add_argument('alt', type=float, help="observer altitude(m)")
+
+    arg_parser.add_argument('dump1090address', help="Address of dump1090 server, i.e 192.168.1.151")
+
+    arg_parser.add_argument('dump1090port', help="Port of dump1090 server, normally 30003")
+
+    arg_parser.add_argument('-p', '--port', action="store_true",
+                            help="""Disable background normalization.""")
+
+    arg_parser.add_argument('-x', '--hideplot', action="store_true",
+                            help="""Don't show the stack on the screen after stacking. """)
+
+    arg_parser.add_argument('-o', '--output', type=str,
+                            help="""folder to save the image in.""")
+
+    arg_parser.add_argument('-s', '--showers', type=str,
+                            help="Show only meteors from specific showers (e.g. URS, PER, GEM, ... for sporadic). Comma-separated list. \
+               Note that an RMS config file that matches the data is required for this option.")
+
+    arg_parser.add_argument('-d', '--darkbackground', action="store_true",
+                            help="""Darken the background. """)
+
+    # Parse the command line arguments
+    cml_args = arg_parser.parse_args()
+
     sta_lat = -32.354356  # deg
     sta_lon = 115.805961  # deg
     sta_ele = 37  # meters
@@ -134,11 +169,11 @@ if __name__ == "__main__":
 
     adsb_message = ""
     adsb_testing = False
-    i = 0
-    f = open("20230128005214.txt2", "r")
+
+    if adsb_testing:
+        f = open("20230128005214.txt2", "r")
     while True:
 
-        #print("Waiting for data")
         if adsb_testing:
             adsb_message = adsb_message + bytes((fake_adsb(100,f))).decode()
 
@@ -147,8 +182,7 @@ if __name__ == "__main__":
             dumpfile3.write(raw_received.decode())
             adsb_message = adsb_message + raw_received.decode()
 
-        #print("Got data")
-        #print("Raw output:{}".format(adsb_message))
+
         if not adsb_testing:
             dumpfile2.writelines(adsb_message)
             #dumpfile.write("Raw output:{}".format(adsb_message))
