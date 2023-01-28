@@ -168,7 +168,7 @@ def handle_adsb(dump1090_address, dump1090_port, sta_lat, sta_lon, sta_ele):
                                                                                                 sta_ele,
                                                                                                 first_adsb_message)
                         # print("Valid:{}\n".format(first_adsb_message))
-                        result = "lat {:.3f}, lon {:.3f}, alt {:.0f}, ra {:.5f}, dec {:.5f}, alt {:.3f}, az {:.2f}, jd {:.3f}, icao {} \n".format(
+                        result = "lat {:.3f}, lon {:.3f}, alt {:.0f}, ra {:.5f}, dec {:.5f}, alt {:.3f}, az {:.2f}, jd {:.7f}, icao {} \n".format(
                             air_lat, air_lon, air_ele, ra, dec, alt, az, jd, air_icao)
                         print(result)
                         data = bytes(result + "\n", "utf-8")
